@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appset-ui
+  namespace: appset-ui
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: appset-ui
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: appset-ui
+    spec:
+      containers:
+        - name: main
+          env:
+             - name: USERNAME
+               valueFrom:
+                 secretKeyRef:
+                   name: git-creds
+                   key: USERNAME
+             - name: TOKEN
+               valueFrom:
+                 secretKeyRef:
+                   name: git-creds
+                   key: TOKEN
+             - name: BRANCH
+               value: moreadv
+             - name: REPO_URL
+               value: https://github.com/gopaljayanthi/appset-chart.git
+             - name: LOCAL_REPO_PATH
+               value: /tmp/appset-chart
+          image: gopalvithaljayanthi/apspet-ui:v1moreadv
+          command: ["python"]
+          args: ["/app/app.py"]
+          ports:
+            - containerPort: 5000
+              name: http
+          volumeMounts:
+            - name: appset-script
+              mountPath: "/app/app.py"
+              subPath: "app.py"
+      volumes:
+        - name: appset-script
+          configMap:
+            name: appset-ui

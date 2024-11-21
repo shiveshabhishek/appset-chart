@@ -1,0 +1,57 @@
+#set only one of the following to be true, the method of deployment
+plainYAML: false
+helm: true
+helmNotInGit: false
+#kustomize: false # this template is not yet ready
+
+#common variables for all environments
+
+name: hg-en5-cl3-sg4
+project: default
+repoURL: https://github.com/gopaljayanthi/appset-chart.git      # Can point to either a Helm chart repo or a git repo.
+
+# variables for specific environments
+environments:
+- name: env-dev
+  stage: one
+  namespace: dev-hg-en5-cl3-sg4
+  url: https://dev-vcluster.devops.opsmx.org:443
+  path: examples/helm/testchart                                                     # This has no meaning for Helm charts pulled directly from a Helm repo instead of git.
+  targetRevision: stages                                                # For Helm, this refers to the chart version.
+  valueFiles: dev-values.yaml
+- name: env-qa
+  stage: two
+  namespace: qa-hg-en5-cl3-sg4
+  url: https://dev-vcluster.devops.opsmx.org:443
+  path: examples/helm/testchart                                                     # This has no meaning for Helm charts pulled directly from a Helm repo instead of git.
+  targetRevision: stages                                                # For Helm, this refers to the chart version.
+  valueFiles: qa-values.yaml
+- name: env-uat
+  stage: three
+  namespace: uat-hg-en5-cl3-sg4
+  url: https://uat-vcluster.devops.opsmx.org:443
+  path: examples/helm/testchart                                                     # This has no meaning for Helm charts pulled directly from a Helm repo instead of git.
+  targetRevision: stages                                                # For Helm, this refers to the chart version.
+  valueFiles: prod-values.yaml
+- name: env-perf
+  stage: three
+  namespace: perf-hg-en5-cl3-sg4
+  url: https://uat-vcluster.devops.opsmx.org:443
+  path: examples/helm/testchart                                                     # This has no meaning for Helm charts pulled directly from a Helm repo instead of git.
+  targetRevision: stages                                                # For Helm, this refers to the chart version.
+  valueFiles: prod-values.yaml
+- name: env-prod
+  stage: four
+  namespace: hg-en5-cl3-sg4
+  url: https://prod-vcluster.devops.opsmx.org:443
+  path: examples/helm/testchart                                                     # This has no meaning for Helm charts pulled directly from a Helm repo instead of git.
+  targetRevision: stages                                                # For Helm, this refers to the chart version.
+  valueFiles: prod-values.yaml
+
+stages:
+  key: stage
+  values:
+  - one
+  - two
+  - three
+  - four

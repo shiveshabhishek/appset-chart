@@ -1,0 +1,31 @@
+environments:
+- name: dev
+  namespace: dev-uimoreadv
+  path: ''
+  project: default
+  stage: one
+  targetRevision: ''
+  url: ''
+  valueFiles: dev-values.yaml
+- name: prod
+  namespace: prod-uimoreadv
+  path: ''
+  project: default
+  stage: two
+  targetRevision: ''
+  url: ''
+  valueFiles: prod-values.yaml
+helm: true
+name: uimoreadv
+namespace: ''
+path: examples/helm/testchart
+plainYAML: false
+project: ''
+repoURL: https://github.com/gopaljayanthi/appset-chart.git
+stages:
+  key: stage
+  values:
+  - one
+  - two
+targetRevision: moreadv
+url: https://kubernetes.default.svc

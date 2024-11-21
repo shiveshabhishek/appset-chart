@@ -1,0 +1,53 @@
+environments:
+- name: env-dev
+  namespace: ykf-dev-ma-job-py-en2-cl1-sg3
+  path: 'examples/plainYAML/engineering-dev '
+  project: ''
+  stage: one
+  targetRevision: ''
+  url: ''
+- name: env-qa-approval
+  namespace: ykf-approval-qa-ma-job-py-en2-cl1-sg3
+  path: k8sjob
+  project: ''
+  stage: two
+  targetRevision: ''
+  url: ''
+- name: env-qa
+  namespace: ykf-qa-ma-job-py-en2-cl1-sg3
+  path: examples/plainYAML/engineering-qa
+  project: ''
+  stage: three
+  targetRevision: ''
+  url: ''
+- name: env-prod-approval
+  namespace: ykf-approval-prod-ma-job-py-en2-cl1-sg3
+  path: gitPR
+  project: ''
+  stage: four
+  targetRevision: ''
+  url: ''
+- name: env-prod
+  namespace: ykf-prod-ma-job-py-en2-cl1-sg3
+  path: examples/plainYAML/engineering-prod
+  project: ''
+  stage: five
+  targetRevision: ''
+  url: ''
+helm: false
+name: ykf-ma-job-py-en2-cl1-sg3
+namespace: ''
+path: ''
+plainYAML: true
+project: default
+repoURL: 'https://github.com/yugaa22/appset-chart.git '
+stages:
+  key: stage
+  values:
+  - one
+  - two
+  - three
+  - four
+  - five
+targetRevision: stages
+url: https://kubernetes.default.svc

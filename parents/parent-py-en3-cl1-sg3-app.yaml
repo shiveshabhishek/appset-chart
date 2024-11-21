@@ -1,0 +1,17 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: parent-py-en3-cl1-sg3   #change-me
+  namespace: argocd
+spec:
+  destination:
+    namespace: argocd
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    helm:
+      valueFiles:
+      - py-en3-cl1-sg3-values.yaml #change-me
+    path: .
+    repoURL: https://github.com/gopaljayanthi/appset-chart.git
+    targetRevision: stages

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Deployment Form</title>
+    <script>
+        function addStage() {
+            const stageContainer = document.getElementById('stages-container');
+            const stageDiv = document.createElement('div');
+            stageDiv.className = 'stage-entry';
+
+            stageDiv.innerHTML = `
+                <label>Stage Value:</label>
+                <input type="text" name="stages[]" required>
+                <button type="button" onclick="removeField(this)">Remove</button>
+                <br>
+            `;
+            stageContainer.appendChild(stageDiv);
+        }
+
+        function addEnvironment() {
+            const envContainer = document.getElementById('environments-container');
+            const envDiv = document.createElement('div');
+            envDiv.className = 'environment-entry';
+
+            const deploymentMethod = document.querySelector('input[name="deployment_method"]:checked').value;
+            const valueFilesInput = document.createElement('input');
+            valueFilesInput.type = 'text';
+            valueFilesInput.name = 'env_valuefiles[]';
+            valueFilesInput.required = (deploymentMethod === 'helm');
+            valueFilesInput.disabled = (deploymentMethod === 'plainYAML');
+            valueFilesInput.style.width = "240px";
+
+            envDiv.innerHTML = `
+                <div style="display: flex; justify-content: space-between;">
+                <label>Environment Name: (dev, test, prod etc)</label>
+                <input type="text" name="env_name[]" required style="height: 15px;"><br>
+                <br>
+                <label>Stage in which deployment will be done one, two three etc:</label>
+                <input type="text" name="env_stage[]" required style="height: 15px;"><br>
+                <br>
+                <label>ArgoCD project:</label>
+                <input type="text" name="env_project[]"  style="height: 15px;"><br>
+                <br>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                <label>Namespace:</label>
+                <input type="text" name="env_namespace[]"  style="height: 15px;"><br>
+                <br>
+                <label>K8S CLUSTER URL: (https://k8sdns.name.com )</label>
+                <input type="text" name="env_url[]" style="height: 15px;width: 500px"><br>
+                <br>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                <label>Path:</label>
+                <input type="text" name="env_path[]" style="height: 15px;width: 500px"><br>
+                <br>
+                <label>Target Revision:</label>
+                <input type="text" name="env_target_revision[]" style="height: 15px;"><br>
+                <br>
+                </div>
+                <label>valueFiles:(onlyapplicable for helm, use comma separated list for multiple values.yaml files)</label>
+                        ${valueFilesInput.outerHTML}
+                <br>
+                <button type="button" onclick="removeField(this)">Remove Environment</button>
+                <hr>
+            `;
+            envContainer.appendChild(envDiv);
+        }
+
+        function removeField(button) {
+            button.parentElement.remove();
+        }
+
+    </script>
+</head>
+<body>
+    <style>
+        .form-title {
+          text-align: center;
+          font-weight: bold;
+          font-size: 36px;
+        }
+      </style>
+      
+      <h2 class="form-title">In house Application Onboarding Form for multiple environments deployed in multiple stages</h2>
+    <form action="/" method="post">
+        <label>Name of the Applicationset:</label>
+        <input type="text" name="name" required><br> 
+        <h3>Select Deployment Method:</h3>
+        <label>
+            <input type="radio" name="deployment_method" value="plainYAML" > Plain YAML
+        </label>
+        <label>
+            <input type="radio" name="deployment_method" value="helm"> Helm
+        </label>
+
+        <h3>Stages (use numbers one two three as values)</h3>
+        <div id="stages-container"></div>
+        <button type="button" onclick="addStage()">Add Stage</button>
+        <h3>Common Variables for all environments</h3>  
+
+        <div style="display: flex; justify-content: space-between;">    
+        <label>Argocd Project:</label>
+        <input type="text" name="project" style="height: 15px;">
+        <label>GIT Repo URL:</label>
+        <input type="text" name="repoURL" required style="width: 500px; height: 15px"><br>
+        <br>
+        </div>
+        <h3>for destination: choose one of the two for common parameters, not both</h3>
+        <div style="display: flex; justify-content: space-between;">    
+            <label>namespace:</label>
+            <input type="text" name="namespace"  style="height: 15px;">
+            <label>Cluster URL:</label>
+            <input type="text" name="url" style="width: 500px; height: 15px"><br>
+            <br>
+        </div>
+
+        <h3>for source: if common to all environments</h3>
+        <div style="display: flex; justify-content: space-between;">    
+            <label>path:</label>
+            <input type="text" name="path"  style="height: 15px;">
+            <label>targetRevision: ( HEAD, main, branch name , tag, commitid )</label>
+            <input type="text" name="targetRevision" style="width: 500px; height: 15px"><br>
+            <br>
+        </div>
+
+        <h3>Environments and environment specific variables, leave blank if you want to inherit from common variables</h3>
+        <div id="environments-container"></div>
+        <button type="button" onclick="addEnvironment()">Add Environment</button>
+        <br>
+        <br>
+        <button type="submit">Download and Commit to git repo </button>
+    </form>
+</body>
+</html>

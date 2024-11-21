@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+    nginx.ingress.kubernetes.io/auth-type: "basic"
+    nginx.ingress.kubernetes.io/auth-secret: "basic-auth"
+    nginx.ingress.kubernetes.io/auth-realm: "Authentication Required"
+  name: appset-ui-ingress
+  namespace: appset-ui
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: appset-ui.devops.opsmx.org
+    http:
+      paths:
+      - backend:
+          service:
+            name: appset-ui
+            port:
+              number: 5000
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - appset-ui.devops.opsmx.org
+    secretName: appset-ui-tls-certificate

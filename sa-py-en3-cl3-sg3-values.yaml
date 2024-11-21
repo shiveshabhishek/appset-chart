@@ -1,0 +1,37 @@
+environments:
+- name: dev
+  namespace: sa-py-en3-cl3-sg3
+  path: examples/plainYAML/engineering-dev
+  project: ''
+  stage: one
+  targetRevision: moreadv
+  url: https://dev-vcluster.devops.opsmx.org:443
+- name: qa
+  namespace: sa-py-en3-cl3-sg3
+  path: examples/plainYAML/engineering-qa
+  project: ''
+  stage: two
+  targetRevision: moreadv
+  url: https://qa-vcluster.devops.opsmx.org:443
+- name: prod
+  namespace: sa-py-en3-cl3-sg3
+  path: examples/plainYAML/engineering-prod
+  project: ''
+  stage: three
+  targetRevision: moreadv
+  url: https://prod-vcluster.devops.opsmx.org:443
+helm: false
+name: sa-py-en3-cl3-sg3
+namespace: ''
+path: ''
+plainYAML: true
+project: default
+repoURL: https://github.com/gopaljayanthi/appset-chart.git
+stages:
+  key: stage
+  values:
+  - one
+  - two
+  - three
+targetRevision: ''
+url: ''

@@ -1,0 +1,33 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: Validate=false
+    argocd.argoproj.io/sync-options: Force=true,Replace=true
+  name: approval-job
+spec:
+  backoffLimit: 6
+  completionMode: NonIndexed
+  completions: 1
+  parallelism: 1
+  suspend: true
+  template:
+    metadata:
+    spec:
+      containers:
+        - command:
+            - /bin/sh
+            - '-c'
+            - echo Promotion is approved; sleep 10
+          image: busybox
+          imagePullPolicy: Always
+          name: example
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Never
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+

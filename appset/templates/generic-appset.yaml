@@ -1,0 +1,66 @@
+{{- $appsetName := .Values.name }}
+{{- $project := .Values.project }}
+{{- $url := .Values.url }}
+{{- $targetRevision := .Values.targetRevision }}
+{{- $path := .Values.path }}
+{{- $namespace := .Values.namespace }}
+
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: {{ $appsetName }}
+spec:
+  generators:
+  - list:
+      elements:
+{{- range $environments := .Values.environments }}
+      - cluster: {{ .name | trimPrefix "env-" }}
+        stage: {{ .stage }}
+        url: {{ default $url .url  }}
+        env: {{ .name }}
+        path: {{ default $path .path  }}
+        project: {{ default $project .project  }}
+        targetRevision: {{ default $targetRevision .targetRevision }}
+        namespace: {{ default $namespace .namespace  }} 
+        valueFiles: {{ .valueFiles }}     
+{{- end }}
+  strategy:
+    type: RollingSync
+    rollingSync:
+      steps:
+{{- $stagekey := .Values.stages.key }}
+{{- range .Values.stages.values }}
+        - matchExpressions:
+            - key: {{ $stagekey }}
+              operator: In
+              values:
+                - {{ . }}-{{ $appsetName }}
+{{- end }}
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  template:
+    metadata:
+      name: '{{ "{{" }}.cluster{{ "}}" }}-{{ $appsetName }}'
+      labels:
+        {{ $stagekey }}: '{{ "{{" }}.stage{{ "}}" }}-{{ $appsetName }}'
+    spec:
+      destination:
+        server: '{{ "{{" }}.url{{ "}}" }}'
+        namespace: '{{ "{{" }}.namespace{{ "}}" }}'
+      syncPolicy:
+        syncOptions:     # Sync options which modifies sync behavior
+         - CreateNamespace=true
+      project: '{{ "{{" }}.project{{ "}}" }}'
+      source:
+        repoURL: {{ .Values.repoURL }}
+        targetRevision: '{{ "{{" }}.targetRevision{{ "}}" }}'
+        path: '{{ "{{" }}.path{{ "}}" }}'
+{{- if .Values.helm }}
+{{- if .Values.helmNotInGit }}
+        chart: {{ .Values.chart }}
+{{- end }}
+        helm: 
+          releaseName: {{ $appsetName }}
+          valueFiles: 
+          - '{{ "{{" }}.valueFiles{{ "}}" }}'
+{{- end }}

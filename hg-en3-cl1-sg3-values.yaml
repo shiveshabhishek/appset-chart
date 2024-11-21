@@ -1,0 +1,35 @@
+#set only one of the following to be true, the method of deployment
+plainYAML: false
+helm: true
+#kustomize: false # this template is not yet ready
+
+#common variables for all environments
+
+name: hg-en3-cl1-sg3
+project: default
+repoURL: https://github.com/gopaljayanthi/appset-chart.git      # Can point to either a Helm chart repo or a git repo.
+url: https://kubernetes.default.svc
+path: examples/helm/testchart
+targetRevision: stages
+
+# variables for specific environments
+environments:
+- name: env-dev
+  stage: one
+  namespace: dev-hg-en3-cl1-sg3                                                         # This has no meaning for Helm charts pulled directly from a Helm repo instead of git.    
+  valueFiles: 'dev-values.yaml'
+- name: env-qa
+  stage: two
+  namespace: qa-hg-en3-cl1-sg3                                                     # This has no meaning for Helm charts pulled directly from a Helm repo instead of git.
+  valueFiles: 'qa-values.yaml'
+- name: env-prod
+  stage: three
+  namespace: prod-hg-en3-cl1-sg3                                                     # This has no meaning for Helm charts pulled directly from a Helm repo instead of git.
+  valueFiles: 'qa-values.yaml,prod-values.yaml'
+
+stages:
+  key: stage
+  values:
+  - one
+  - two
+  - three

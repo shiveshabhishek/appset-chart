@@ -1,0 +1,56 @@
+---
+# Source: k8sinfra-chart/templates/k8sinfra-appset.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: k8sinfra-appset
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+  - matrix:
+      generators:
+        - git:
+            repoURL: https://github.com/gopaljayanthi/appset-chart.git
+            revision: moreadv
+            files:
+            - path: "configs/**/config.json"
+        - clusters: {}
+  syncPolicy:
+    preserveResourcesOnDeletion: false
+  strategy:
+    type: AllAtOnce
+  template:
+    metadata:
+      name: '{{.name}}-{{.appName}}'
+    spec:
+      project: default
+      sources:
+        - repoURL: '{{.repoURL}}'
+          targetRevision: '{{.targetRevision}}'
+          chart: '{{.chart}}'
+          helm:
+            releaseName: '{{.releaseName}}'
+            valueFiles:
+              - "$values/{{.valuesPath}}"
+              - "$values/{{.valuesOverlayPath}}"
+        - repoURL: https://github.com/gopaljayanthi/appset-chart.git
+          targetRevision: moreadv
+          ref: values
+      destination:
+        server: '{{.server}}'
+        namespace: '{{.namespace}}'
+      syncPolicy:
+        automated:
+          prune: true
+          allowEmpty: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+        retry:
+          limit: 1
+          backoff:
+            duration: 60s
+            factor: 2
+            maxDuration: 2m

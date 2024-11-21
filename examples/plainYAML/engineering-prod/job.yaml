@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
+    argocd.argoproj.io/sync-options: Validate=false
+    argocd.argoproj.io/sync-options: Force=true,Replace=true
+    foo: bar
+    goo: bar
+    boo: bar
+    loo: bar
+    moo: bar
+    noo: var
+  name: run-tests
+spec:
+  template:
+    spec:
+      containers:
+      - name: run-tests
+        image: curlimages/curl:latest
+        command: ["/bin/sh", "-c"]
+        args:
+          - echo i have been run; echo when did i run; sleep 60; exit 0
+      restartPolicy: Never
+  backoffLimit: 0

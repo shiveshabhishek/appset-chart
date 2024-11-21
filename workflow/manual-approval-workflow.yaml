@@ -1,0 +1,70 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  name: approval-workflow
+  annotations:
+    workflows.argoproj.io/halt-message: "Please manually approve to continue the workflow."
+    argocd.argoproj.io/sync-options: Validate=false
+    argocd.argoproj.io/sync-options: Force=true,Replace=true
+spec:
+  entrypoint: main
+  templates:
+  - name: main
+    steps:
+    - - name: step-1
+        template: simple-task
+    - - name: approval-step
+        template: approval
+    - - name: step-2
+        template: simple-task
+
+  # Simple task template
+  - name: simple-task
+    container:
+      image: alpine:3.7
+      command: [sh, -c]
+      args: ["echo 'Task executed'"]
+
+  # Manual approval step using suspend
+  - name: approval
+    suspend: {}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: workflow-role
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "watch", "list", "patch", "create", "delete"]
+- apiGroups:
+  - "argoproj.io"
+  resources:
+  - "workflows"
+  - "workflowtaskresults"
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: workflow-rolebinding
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: approval-prod-ma-wf-py-en2-cl1-sg3
+roleRef:
+  kind: Role
+  name: workflow-role
+  apiGroup: rbac.authorization.k8s.io
+
+
+
+
+

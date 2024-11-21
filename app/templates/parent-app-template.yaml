@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: parent-{{.Values.name}}
+  namespace: argocd
+spec:
+  destination:
+    namespace: argocd
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    helm:
+      valueFiles:
+      - ../{{.Values.name}}-values.yaml 
+    path: appset
+    repoURL: https://github.com/gopaljayanthi/appset-chart.git
+    targetRevision: moreadv
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

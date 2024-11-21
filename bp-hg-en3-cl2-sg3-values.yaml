@@ -1,0 +1,40 @@
+environments:
+- name: env-dev
+  namespace: bp-hg-en3-cl2-sg3-dev
+  path: examples/helm/testchart
+  project: ''
+  stage: one
+  targetRevision: moreadv
+  url: https://dev-vcluster.devops.opsmx.org:443
+  valueFiles: dev-values.yaml
+- name: env-qa
+  namespace: bp-hg-en3-cl2-sg3-qa
+  path: examples/helm/testchart
+  project: ''
+  stage: two
+  targetRevision: moreadv
+  url: https://prod-vcluster.devops.opsmx.org:443
+  valueFiles: qa-values.yaml
+- name: env-prod
+  namespace: bp-hg-en3-cl2-sg3-prod
+  path: examples/helm/testchart
+  project: ''
+  stage: three
+  targetRevision: moreadv
+  url: https://prod-vcluster.devops.opsmx.org:443
+  valueFiles: prod-values.yaml
+helm: true
+name: bp-hg-en3-cl2-sg3
+namespace: ''
+path: ''
+plainYAML: false
+project: default
+repoURL: https://github.com/gopaljayanthi/appset-chart.git
+stages:
+  key: stage
+  values:
+  - one
+  - two
+  - three
+targetRevision: ''
+url: ''

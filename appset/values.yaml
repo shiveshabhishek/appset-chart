@@ -1,0 +1,43 @@
+#set only one of the following to be true, the method of deployment
+plainYAML: true
+helm: false
+helmNotInGit: false
+#kustomize: false # this template is not yet ready
+
+#common variables for all environments
+
+name: $%$%$guestbook
+project: my-project
+repoURL: https://github.com/infra-team/cluster-deployments.git      # Can point to either a Helm chart repo or a git repo.
+chart: abcde                                                  # Set this when pulling directly from a Helm repo. DO NOT set for git-hosted Helm charts.
+
+# variables for specific environments
+environments:
+- name: env-dev
+  stage: one
+  namespace: guestbook
+  url: 1.2.3.4
+  path: guestbook                                                     # This has no meaning for Helm charts pulled directly from a Helm repo instead of git.
+  targetRevision: HEAD                                                # For Helm, this refers to the chart version.
+#  valueFiles: dev-values.yaml                                                       # not relevant for plain yamls
+- name: env-qa
+  stage: two
+  namespace: guestbook
+  url: 2.4.6.8
+  path: guestbook                                                     # This has no meaning for Helm charts pulled directly from a Helm repo instead of git.
+  targetRevision: HEAD                                                # For Helm, this refers to the chart version.
+#  valueFiles: dev-valus.yaml, qa-values.yaml                                                      # not relevant for plain yamls
+- name: env-prod
+  stage: three
+  namespace: guestbook
+  url: 9.8.7.6
+  path: guestbook                                                     # This has no meaning for Helm charts pulled directly from a Helm repo instead of git.
+  targetRevision: HEAD                                                # For Helm, this refers to the chart version.
+#  valueFiles: dev-valus.yaml, qa-values.yaml,prod-values.yaml                                                       # not relevant for plain yamls
+
+stages:
+  key: stage
+  values:
+  - one
+  - two
+  - three

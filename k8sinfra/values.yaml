@@ -1,0 +1,7 @@
+configrepoURL: https://github.com/gopaljayanthi/appset-chart.git
+configrepoRevision: moreadv
+configrepoPath: "configs/**/config.json"
+valuesrepoURL: https://github.com/gopaljayanthi/appset-chart.git
+valuesrepoRevision: moreadv
+preserveResourcesOnDeletion: "false"
+project: default

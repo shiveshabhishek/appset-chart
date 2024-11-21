@@ -1,0 +1,56 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: wait-for-pr-merge
+  annotations:
+    argocd.argoproj.io/sync-options: Validate=false
+    argocd.argoproj.io/sync-options: Force=true,Replace=true
+spec:
+  template:
+    spec:
+      containers:
+      - name: wait-for-pr-merge
+        image: curlimages/curl:latest  # Using the 'curler' image
+        env:
+        - name: GITHUB_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: github-token-secret
+              key: token  # This secret stores your GitHub token
+        - name: GITHUB_REPO
+          valueFrom:
+            configMapKeyRef:
+              name: pr-details-configmap
+              key: repo  # Repository from ConfigMap
+        - name: PR_NUMBER
+          valueFrom:
+            configMapKeyRef:
+              name: pr-details-configmap
+              key: pr_number  # PR number from ConfigMap
+        command:
+        - /bin/sh
+        - -c
+        - |
+          while true; do
+            STATUS=$(curl -H "Authorization: token ${GITHUB_TOKEN}" \
+                           -H "Accept: application/vnd.github.v3+json" \
+                           https://api.github.com/repos/${GITHUB_REPO}/pulls/${PR_NUMBER} \
+                           | grep '"merged": true')
+
+            if [[ "$?" == "0" ]]; then
+              echo "PR merged. Exiting."
+              exit 0
+            fi
+            echo "PR not merged yet. Sleeping for 60 seconds."
+            sleep 60
+          done
+      restartPolicy: Never
+  backoffLimit: 4
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pr-details-configmap
+data:
+  repo: "gopaljayanthi/forprs"  # Replace with your GitHub repository (e.g., user/repo)
+  pr_number: "3"  # Replace with your PR number

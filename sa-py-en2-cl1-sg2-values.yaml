@@ -1,0 +1,29 @@
+environments:
+- name: dev
+  namespace: sa-dev-py-en2-cl1-sg2
+  path: examples/plainYAML/engineering-dev
+  project: ''
+  stage: one
+  targetRevision: moreadv
+  url: https://kubernetes.default.svc
+- name: prod
+  namespace: sa-prod-py-en2-cl1-sg2
+  path: examples/plainYAML/engineering-prod
+  project: ''
+  stage: two
+  targetRevision: moreadv
+  url: https://kubernetes.default.svc
+helm: false
+name: sa-py-en2-cl1-sg2
+namespace: ''
+path: ''
+plainYAML: true
+project: default
+repoURL: https://github.com/gopaljayanthi/appset-chart.git
+stages:
+  key: stage
+  values:
+  - one
+  - two
+targetRevision: ''
+url: ''

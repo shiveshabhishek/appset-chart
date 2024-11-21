@@ -1,0 +1,50 @@
+#set only one of the following to be true, the method of deployment
+plainYAML: true
+helm: false
+#kustomize: false # this template is not yet ready
+
+#common variables for all environments
+
+name: py-en5-cl5-sg3
+project: default
+repoURL: https://github.com/gopaljayanthi/appset-chart.git      # Can point to either a Helm chart repo or a git repo.
+
+# variables for specific environments
+environments:
+- name: env-dev
+  stage: one
+  namespace: py-en5-cl5-sg3
+  url: https://dev-vcluster.devops.opsmx.org:443
+  path: examples/plainYAML/engineering-dev                            # This has no meaning for Helm charts pulled directly from a Helm repo instead of git.
+  targetRevision: stages
+- name: env-qa
+  stage: two
+  namespace: py-en5-cl5-sg3
+  url: https://qa-vcluster.devops.opsmx.org:443
+  path: examples/plainYAML/engineering-qa                            # This has no meaning for Helm charts pulled directly from a Helm repo instead of git.
+  targetRevision: stages                                                  # For Helm, this refers to the chart version.
+- name: env-uat
+  stage: two
+  namespace: py-en5-cl5-sg3
+  url: https://uat-vcluster.devops.opsmx.org:443
+  path: examples/plainYAML/engineering-qa                            # This has no meaning for Helm charts pulled directly from a Helm repo instead of git.
+  targetRevision: stages
+- name: env-perf
+  stage: three
+  namespace: py-en5-cl5-sg3
+  url: https://perf-vcluster.devops.opsmx.org:443
+  path: examples/plainYAML/engineering-prod          # This has no meaning for Helm charts pulled directly from a Helm repo instead of git.
+  targetRevision: stages                                                # For Helm, this refers to the chart version.
+- name: env-prod
+  stage: three
+  namespace: py-en5-cl5-sg3
+  url: https://prod-vcluster.devops.opsmx.org:443
+  path: examples/plainYAML/engineering-prod          # This has no meaning for Helm charts pulled directly from a Helm repo instead of git.
+  targetRevision: stages                                                # For Helm, this refers to the chart version.
+
+stages:
+  key: envLabel
+  values:
+  - one
+  - two
+  - three

@@ -1,0 +1,57 @@
+environments:
+- name: dev
+  namespace: dev-hg-en5-cl3-sg4
+  path: examples/helm/testchart
+  project: ''
+  stage: one
+  targetRevision: moreadv
+  url: https://dev-vcluster.devops.opsmx.org:443
+  valueFiles: dev-values.yaml
+- name: qa
+  namespace: qa-hg-en5-cl3-sg4
+  path: examples/helm/testchart
+  project: ''
+  stage: two
+  targetRevision: moreadv
+  url: https://dev-vcluster.devops.opsmx.org:443
+  valueFiles: qa-values.yaml
+- name: uat
+  namespace: uat-hg-en5-cl3-sg4
+  path: examples/helm/testchart
+  project: ''
+  stage: three
+  targetRevision: moreadv
+  url: https://uat-vcluster.devops.opsmx.org:443
+  valueFiles: prod-values.yaml
+- name: perf
+  namespace: perf-hg-en5-cl3-sg4
+  path: examples/helm/testchart
+  project: ''
+  stage: three
+  targetRevision: moreadv
+  url: https://uat-vcluster.devops.opsmx.org:443
+  valueFiles: prod-values.yaml
+- name: prod
+  namespace: hg-en5-cl3-sg4
+  path: examples/helm/testchart
+  project: ''
+  stage: four
+  targetRevision: moreadv
+  url: https://prod-vcluster.devops.opsmx.org:443
+  valueFiles: prod-values.yaml
+helm: true
+name: tm-hg-en5-cl3-sg4
+namespace: ''
+path: ''
+plainYAML: false
+project: default
+repoURL: https://github.com/gopaljayanthi/appset-chart.git
+stages:
+  key: stage
+  values:
+  - one
+  - two
+  - three
+  - four
+targetRevision: ''
+url: ''

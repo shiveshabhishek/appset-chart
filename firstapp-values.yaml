@@ -1,0 +1,21 @@
+environments:
+- name: dev
+  namespace: dev
+  path: /src/valuesdir
+  project: firstargo
+  stage: three
+  targetRevision: first
+  url: https://k8sdns.name.com
+helm: false
+name: firstapp
+namespace: test
+path: /src/repo
+plainYAML: true
+project: firstargo
+repoURL: https://github.com/j-sandy/test.git
+stages:
+  key: stage
+  values:
+  - '3'
+targetRevision: main
+url: http://argocluster.io

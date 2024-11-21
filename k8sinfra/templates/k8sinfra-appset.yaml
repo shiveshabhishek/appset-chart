@@ -1,0 +1,54 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: k8sinfra-appset
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+  - matrix:
+      generators:
+        - git:
+            repoURL: {{.Values.configrepoURL}}
+            revision: {{.Values.configrepoRevision}}
+            files:
+            - path: {{.Values.configrepoPath | quote }}
+        - clusters: {}
+  syncPolicy:
+    preserveResourcesOnDeletion: {{.Values.preserveResourcesOnDeletion}}
+  strategy:
+    type: AllAtOnce
+  template:
+    metadata:
+      name: '{{ "{{" }}.name{{ "}}" }}-{{ "{{" }}.appName{{ "}}" }}'
+    spec:
+      project: {{.Values.project}}
+      sources:
+        - repoURL: '{{ "{{" }}.repoURL{{ "}}" }}'
+          targetRevision: '{{ "{{" }}.targetRevision{{ "}}" }}'
+          chart: '{{ "{{" }}.chart{{ "}}" }}'
+          helm:
+            releaseName: '{{ "{{" }}.releaseName{{ "}}" }}'
+            valueFiles:
+              - "$values/{{ "{{" }}.valuesPath{{ "}}" }}"
+              - "$values/{{ "{{" }}.valuesOverlayPath{{ "}}" }}"
+        - repoURL: {{.Values.valuesrepoURL}}
+          targetRevision: {{.Values.valuesrepoRevision}}
+          ref: values
+      destination:
+        server: '{{ "{{" }}.server{{ "}}" }}'
+        namespace: '{{ "{{" }}.namespace{{"}}"}}'
+      syncPolicy:
+        automated:
+          prune: true
+          allowEmpty: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+        retry:
+          limit: 1
+          backoff:
+            duration: 60s
+            factor: 2
+            maxDuration: 2m

@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: cluster-most-basic
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - clusters:
+        selector:
+          matchLabels:
+            argocdcluster: "true"
+  template:
+    metadata:
+      name: test-app
+    spec:
+      project: default
+      source:
+        repoURL: "https://github.com/gopaljayanthi/appset-chart.git"
+        targetRevision: "moreadv"
+        path: testapp
+      destination:
+        server: "https://kubernetes.default.svc"
+        namespace: default
